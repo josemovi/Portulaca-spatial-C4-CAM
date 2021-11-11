@@ -86,3 +86,9 @@ $(grep n_unique ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | 
 $(grep p_pseudoaligned ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
 $(grep p_unique ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
 ; done > library_reads_mapping_stats_june2021.csv
+
+### SORT KALLISTO OUT FILES: 
+
+mkdir kallisto_output_abundance_h5_dir
+# Copy all the `.h5` output files organized by library name
+for i in*PO*dir; do mkdir kallisto_output_abundance_h5_dir/${i/-dir}; cp $i/abundance.h5 kallisto_output_abundance_h5_dir/${i/-dir}/.; done
