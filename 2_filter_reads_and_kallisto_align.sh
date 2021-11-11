@@ -68,3 +68,21 @@ kallisto index -i $transcript $transcript.kal
 ## Execute Kallisto pseudoaligner
 
 kallisto quant -i $transcript.kal -o $kallistoout/library-dir -b 100 --threads 16 $readsdir/library_R1.PairedTrimmed.fastq $readsdir/library_R2.PairedTrimmed.fastq;
+
+### GENERATE READS MAPPING STATISTICS TABLE
+
+## in the folder where the reads are
+for i in *R1.fastq; do echo $i $(( $(cat $i | wc -l) / 4 )); done > number_read_per_library.csv
+
+# COUNT NUMBER OF READS, NUMBER OF FILTERED, NUMBER OF MAPPED BY KALLISTO
+echo 'library n_raw_reads n_trimmed n_processed n_pseudoaligned n_unique p_pseudoaligned p_unique'> library_reads_mapping_stats_june2021.csv
+cut -f1 -d' ' number_read_per_library.csv | while read i; do \
+lib=$(echo $i | sed 's/_R.*//g'); \
+echo $lib $(grep "^$lib\_R1" number_read_per_library.csv | cut -f2 -d' ') \
+$(( $(cat $lib*R1.PairedTrimmed.fastq | wc -l) / 4 )) \
+$(grep n_processed ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
+$(grep n_pseudoaligned ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
+$(grep n_unique ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
+$(grep p_pseudoaligned ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
+$(grep p_unique ../trimmed_transdec_cdhit_kallisto_bam/$lib-dir/run_info.json | sed 's/.* //g' | sed 's/,.*//g') \
+; done > library_reads_mapping_stats_june2021.csv
