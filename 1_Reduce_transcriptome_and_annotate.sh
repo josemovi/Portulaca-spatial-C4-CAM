@@ -56,3 +56,7 @@ $trinodir/Trinotate $trinodir/Trinotate.sqlite LOAD_swissprot_blastp best_single
 ## Create Trinotate report
 $trinodir/Trinotate $trinodir/Trinotate.sqlite report -E 1e-3 > trinotate_annotation_report.xls
 
+## GENERATE GENE TO TRANSCRIPTOME MAP WITH TRINOATE GENE ANNOTATIONS
+
+cut -f1,2,7 ../kallisto_to_mRNA/trinotate_annotation_report.xls | sed 's/\^.*//g' > Trinity_reduced_gene_map_annotated.delim2
+
